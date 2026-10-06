@@ -1,0 +1,168 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  googleId    String?  @unique
+  email       String   @unique
+  username    String   @unique
+  password    String?
+  firstName   String?
+  lastName    String?
+  phone       String?
+  avatar      String?
+  bio         String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  images                Image[]
+  mentions              ImageMention[]
+  reactions             Reaction[]
+  comments              Comment[]
+  notificationsReceived Notification[] @relation("NotificationReceiver")
+  notificationsSent     Notification[] @relation("NotificationSender")
+  followers             Follow[]       @relation("Following")
+  following             Follow[]       @relation("Follower")
+  conversations1        Conversation[] @relation("ConversationUser1")
+  conversations2        Conversation[] @relation("ConversationUser2")
+  messagesSent          Message[]      @relation("MessageSender")
+
+  @@map("users")
+}
+
+model Image {
+  id          String   @id @default(uuid())
+  urlSmall    String?
+  urlMedium   String?
+  urlLarge    String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hashtags      ImageHashtag[]
+  mentions      ImageMention[]
+  reactions     Reaction[]
+  comments      Comment[]
+  notifications Notification[]
+
+  @@map("images")
+}
+
+model Hashtag {
+  id        String         @id @default(uuid())
+  name      String         @unique
+  images    ImageHashtag[]
+  createdAt DateTime       @default(now())
+
+  @@index([name])
+  @@map("hashtags")
+}
+
+model ImageHashtag {
+  imageId   String
+  hashtagId String
+  image     Image   @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  hashtag   Hashtag @relation(fields: [hashtagId], references: [id], onDelete: Cascade)
+
+  @@id([imageId, hashtagId])
+  @@map("image_hashtags")
+}
+
+model ImageMention {
+  id        String   @id @default(uuid())
+  imageId   String
+  image     Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([imageId, userId])
+  @@map("image_mentions")
+}
+
+model Reaction {
+  id        String   @id @default(uuid())
+  imageId   String
+  image     Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([imageId, userId])
+  @@map("reactions")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  imageId   String
+  image     Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("comments")
+}
+
+model Notification {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation("NotificationReceiver", fields: [userId], references: [id], onDelete: Cascade)
+  fromUserId String
+  fromUser   User     @relation("NotificationSender", fields: [fromUserId], references: [id], onDelete: Cascade)
+  type       String
+  imageId    String
+  image      Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@map("notifications")
+}
+
+model Follow {
+  followerId  String
+  followingId String
+  follower    User     @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@id([followerId, followingId])
+  @@map("follows")
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  user1Id   String
+  user2Id   String
+  user1     User      @relation("ConversationUser1", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2     User      @relation("ConversationUser2", fields: [user2Id], references: [id], onDelete: Cascade)
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([user1Id, user2Id])
+  @@map("conversations")
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User         @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  content        String
+  read           Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+
+  @@map("messages")
+}

@@ -1,0 +1,9 @@
+# Exclude node_modules and build artifacts
+node_modules
+dist
+npm-debug.log
+.env
+.env.local
+.git
+.gitignore
+README.md

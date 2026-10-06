@@ -1,0 +1,79 @@
+services:
+  # =============================================================================
+  # PostgreSQL Database
+  # =============================================================================
+  db:
+    image: postgres:15-alpine
+    container_name: ugram-db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ugram
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user -d ugram" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ugram-network
+
+  # =============================================================================
+  # Backend API (Express.js)
+  # =============================================================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ugram-backend
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      BACKEND_URL: http://localhost:4000
+      FRONTEND_URL: http://localhost:3000
+      DATABASE_URL: postgresql://user:password@db:5432/ugram?schema=public
+      CORS_ORIGIN: http://localhost:3000
+      SESSION_SECRET: change-me
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+    volumes:
+      - ugram-uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - ugram-network
+
+    # =============================================================================
+    # Frontend (Next.js)
+    # =============================================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Passé comme ARG au build pour que Next.js bake la bonne URL dans le bundle compilé
+        NEXT_PUBLIC_API_URL: http://localhost:4000
+    container_name: ugram-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+    depends_on:
+      - backend
+    networks:
+      - ugram-network
+
+volumes:
+  postgres_data:
+  ugram-uploads:
+
+
+networks:
+  ugram-network:
+    driver: bridge
