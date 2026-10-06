@@ -1,25 +1,19 @@
-# Provenance
+# Historique du projet
 
-- Dépôt pédagogique d’origine : `GLO3112-classrooms/ugram-h2026-team-24`.
-- Révision source : `310824c70a29b433d747420e82e6782ed1d487a3`.
-- Copie portfolio préparée le 6 octobre 2026 à la demande de Juan José Castilla Manrique.
-- Les anciens noms Git JuanAstroDev et The_OnlyJuanDev correspondent au compte OneCosmicDev.
+## Repères chronologiques
 
-## Attribution
+Le projet commence dans le dépôt d’équipe le **21 janvier 2026**, avec le commit initial `db008b6`. Ma première contribution enregistrée date du **25 janvier 2026** : j’y ai documenté l’architecture et les choix technologiques du premier livrable (`2366da2`). Les dates sont présentées à l’heure du Québec.
 
-Les [contributions et crédits](CONTRIBUTIONS.md) décrivent le périmètre de Juan, les membres identifiés et le matériel fourni. L’auteur du commit initial de cette copie est responsable de sa préparation ; il ne revendique pas l’écriture de l’ensemble du code. Les auteurs du travail source conservent leurs crédits.
+## Dépôt d’origine
 
-## Adaptations pour la publication
+J’ai réalisé ce travail dans `GLO3112-classrooms/ugram-h2026-team-24`. La version publique reprend la révision `310824c70a29b433d747420e82e6782ed1d487a3` du projet scolaire. Je l’ai mise en ligne sur mon compte personnel le **6 octobre 2026** pour présenter mon travail.
 
-L’historique privé n’a pas été importé. Les configurations locales d’IDE, remises et documents d’évaluation, archives binaires et anciens workflows de déploiement ne sont pas publiés. Les notices de licence et les mentions d’auteur des sources conservées sont maintenues. Les exemples de configuration n’incluent pas d’identifiants de services réels.
+Mes anciens noms Git, JuanAstroDev et The_OnlyJuanDev, correspondent à mon compte [OneCosmicDev](https://github.com/OneCosmicDev).
 
-Cette copie n’ajoute pas de licence de réutilisation au travail collectif ni au matériel pédagogique fourni.
+## Version publique
 
-## Points d’entrée dans le code
+J’ai regroupé dans ce dépôt le code utile pour comprendre et lancer le projet, mes contributions et les crédits du cours. Je conserve l’historique scolaire séparément. Les documents de remise, les configurations propres à mon environnement et les archives de déploiement ne font pas partie de cette version.
 
-- [backend/src/middleware/auth.ts](backend/src/middleware/auth.ts)
-- [backend/src/middleware/validate.ts](backend/src/middleware/validate.ts)
-- [backend/src/utils/swagger.ts](backend/src/utils/swagger.ts)
+J’ai remplacé les anciennes valeurs de configuration par des champs d’exemple et réconcilié le lockfile du backend. Les intégrations externes demandent une configuration personnelle.
 
-
-Les valeurs du fichier d’environnement exemple ont été remplacées par une configuration locale et des champs d’intégration vides. L’archive de livraison et sa copie temporaire sont exclues. Le lockfile du backend est réconcilié pour la préparation de cette copie.
+Je conserve les crédits du travail collectif et du matériel pédagogique ; cette mise en ligne n’ajoute pas de licence de réutilisation à ces éléments.
